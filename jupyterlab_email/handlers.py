@@ -1,11 +1,13 @@
 import json
+import logging
 import os
 import os.path
-import logging
+
 import tornado.escape
 import tornado.web
 from jupyter_server.base.handlers import JupyterHandler
-from ._email import make_email, email as email_smtp
+
+from ._email import email as email_smtp, make_email
 
 
 def get_template(type, code, template, handler, user_template=""):
@@ -91,7 +93,7 @@ class EmailHandler(JupyterHandler):
             elif also_attach == "both":
                 also_attach = "html"
 
-        self.logger.critical("converting to <%s> with template <%s>" % (type, template))
+        self.logger.critical("converting to <%s> with template <%s>", type, template)
         path = os.path.join(os.getcwd(), body.get("path"))
         model = body.get("model")
 
@@ -144,10 +146,10 @@ class EmailHandler(JupyterHandler):
                     )
                 if error:
                     self.set_status(500)
-                    raise Exception("Error during conversion!")
+                    raise RuntimeError("Error during conversion!")
                 self.finish(str(r))
                 return
-        raise Exception("Email not found!")
+        raise ValueError("Email not found!")
 
 
 class EmailsListHandler(JupyterHandler):

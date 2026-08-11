@@ -82,9 +82,7 @@ def pivot_pandas_to_excel(soup, show_intermediate_breakdown=False, show_total_br
                                 name="th",
                                 attrs={
                                     "class": "empty_pivot_row_first",
-                                    "style": "margin-left:"
-                                    + str(10 * (num_headers_max - len(headers) + indent))
-                                    + "px;",
+                                    "style": "margin-left:" + str(10 * (num_headers_max - len(headers) + indent)) + "px;",
                                 },
                             )
                             if first_header
@@ -92,9 +90,7 @@ def pivot_pandas_to_excel(soup, show_intermediate_breakdown=False, show_total_br
                                 name="th",
                                 attrs={
                                     "class": "empty_pivot_row",
-                                    "style": "margin-left:"
-                                    + str(10 * (num_headers_max - len(headers) + indent))
-                                    + "px;",
+                                    "style": "margin-left:" + str(10 * (num_headers_max - len(headers) + indent)) + "px;",
                                 },
                             )
                         )
@@ -153,21 +149,13 @@ def pivot_pandas_to_excel(soup, show_intermediate_breakdown=False, show_total_br
             # fill in blank headers
             cc = 1
             for _ in range(num_columns_max - len(data) - 1):
-                new_header = (
-                    Tag(name="th", attrs={"class": "total_pivot_row"})
-                    if "All" in headers[-1].contents
-                    else Tag(name="th")
-                )
+                new_header = Tag(name="th", attrs={"class": "total_pivot_row"}) if "All" in headers[-1].contents else Tag(name="th")
                 new_row.insert(cc, new_header)
                 cc += 1
 
             # copy data into row
             for dat in data:
-                new_data = (
-                    Tag(name="td")
-                    if "All" not in headers[-1].contents
-                    else Tag(name="td", attrs={"class": "total_pivot_row"})
-                )
+                new_data = Tag(name="td") if "All" not in headers[-1].contents else Tag(name="td", attrs={"class": "total_pivot_row"})
                 new_data.contents = dat.contents
                 new_row.insert(cc, new_data)
                 cc += 1

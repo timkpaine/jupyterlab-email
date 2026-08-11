@@ -1,15 +1,16 @@
 # jupyterlab_email
+
 A jupyterlab extension to email notebooks from the browser.
 
-[![Build Status](https://github.com/timkpaine/jupyterlab_email/workflows/Build%20Status/badge.svg?branch=main)](https://github.com/timkpaine/jupyterlab_email/actions?query=workflow%3A%22Build+Status%22)
+[![Build Status](https://github.com/timkpaine/jupyterlab_email/actions/workflows/build.yaml/badge.svg?branch=main&event=push)](https://github.com/timkpaine/jupyterlab_email/actions/workflows/build.yaml)
 [![codecov](https://codecov.io/gh/timkpaine/jupyterlab_email/branch/main/graph/badge.svg)](https://codecov.io/gh/timkpaine/jupyterlab_email)
-[![PyPI](https://img.shields.io/pypi/l/jupyterlab_email.svg)](https://pypi.python.org/pypi/jupyterlab_email)
-[![PyPI](https://img.shields.io/pypi/v/jupyterlab_email.svg)](https://pypi.python.org/pypi/jupyterlab_email)
-[![npm](https://img.shields.io/npm/v/jupyterlab_email.svg)](https://www.npmjs.com/package/jupyterlab_email)
+[![License](https://img.shields.io/github/license/timkpaine/jupyterlab_email)](https://github.com/timkpaine/jupyterlab_email)
+[![PyPI](https://img.shields.io/pypi/v/jupyterlab-email.svg)](https://pypi.python.org/pypi/jupyterlab-email)
 
 ![](https://raw.githubusercontent.com/timkpaine/jupyterlab_email/main/docs/example.gif)
 
 ## Options
+
 - Inline notebook as email, with code
 - Inline notebook as email, without code
 - Send notebook as HTML attachment, with code
@@ -19,6 +20,7 @@ A jupyterlab extension to email notebooks from the browser.
 - Attach output data as CSV, TSV, PDF, PNG, or Excel Spreadsheet
 
 ## Install
+
 ```bash
 pip install jupyterlab_email
 jupyter labextension install jupyterlab_email
@@ -26,6 +28,7 @@ jupyter serverextension enable --py jupyterlab_email
 ```
 
 ## Adding templates
+
 install the server extension, and add the following to `jupyter_notebook_config.py`
 
 ```python3
@@ -37,9 +40,10 @@ c.JupyterLabEmail.smtp_servers = [{'name': 'gmail',
 
 ```
 
-
 ## Create email from notebook:
+
 Use the function in `jupyterlab_email._email`
+
 ```python3
 def make_email(path, model, from_, type='email', template='', code=False, subject='',
                also_attach='none', also_attach_pdf_template='', also_attach_html_template=''):
@@ -57,6 +61,7 @@ def make_email(path, model, from_, type='email', template='', code=False, subjec
 ```
 
 ## Attach dataframe as csv or spreadsheet
+
 In `jupyterlab_email.attachments`
 
 ```python3
@@ -65,8 +70,8 @@ def attach(data, filename, type):
 
 Modify `jupyterlab_email.attachments.EXCEL_ENGINE` to use a different excel writer (defaults to `xlsxwriter`)
 
-
 ## Inline LaTeX
+
 In `jupyterlab_email.attachments`
 
 ```python3
@@ -81,4 +86,5 @@ def latex(expression):
     plt.show()
 ```
 
-
+> [!NOTE]
+> This library was generated using [copier](https://copier.readthedocs.io/en/stable/) from the [Base Python Project Template repository](https://github.com/python-project-templates/base).

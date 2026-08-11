@@ -1,4 +1,5 @@
 from unittest.mock import MagicMock
+
 from jupyterlab_email.extension import load_jupyter_server_extension
 
 

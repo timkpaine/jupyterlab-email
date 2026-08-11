@@ -1,13 +1,15 @@
-import os
-import json
-import emails
 import base64
+import json
 import logging
+import os
+
+import emails
 import nbformat
 from bs4 import BeautifulSoup
 from six import iteritems
-from .nbconvert import run
+
 from .attachments import CUSTOM_TAG
+from .nbconvert import run
 
 
 def make_email(
@@ -46,14 +48,12 @@ def make_email(
 
     logger = logger or logging
 
-    if type == "email":
-        type_to = "html"
-    elif type == "html attachment":
+    if type == "email" or type == "html attachment":
         type_to = "html"
     elif type == "pdf attachment":
         type_to = "pdf"
     else:
-        raise Exception("Type not recognized")
+        raise ValueError("Type not recognized")
 
     nb, error = run(to=type_to, name=name, in_=model, template=template, logger=logger)
 
@@ -62,7 +62,7 @@ def make_email(
         return message, error
 
     if not nb:
-        raise Exception("Something went wrong with NBConvert")
+        raise RuntimeError("Something went wrong with NBConvert")
 
     if also_attach in ("pdf", "both"):
         pdf_nb, error1 = run("pdf", name, model, also_attach_pdf_template)
@@ -116,12 +116,7 @@ def make_email(
             if not att.get("localdata"):
                 continue
             filename = att.get("filename")
-            if (
-                filename.endswith(".png")
-                or filename.endswith(".xls")
-                or filename.endswith(".xlsx")
-                or filename.endswith(".pdf")
-            ):
+            if filename.endswith((".png", ".xls", ".xlsx", ".pdf")):
                 att_to_attach[filename] = base64.b64decode(att.get("localdata"))
             else:
                 att_to_attach[filename] = att.get("localdata")
@@ -162,7 +157,7 @@ def make_email(
 
     message = emails.html(
         subject=subject,
-        html="<html>Attachment: %s.%s</html>" % (name, type_to),
+        html=f"<html>Attachment: {name}.{type_to}</html>",
         mail_from=from_,
     )
     message.attach(filename=name + "." + type_to, data=nb)
@@ -198,5 +193,5 @@ def email(message, to, username, password, domain, host, port, logger=None):
     )
     if r.status_code != 250:
         logger.critical(r)
-        raise Exception("Email exception! Check username and password")
+        raise RuntimeError("Email exception! Check username and password")
     return r

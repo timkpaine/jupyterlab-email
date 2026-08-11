@@ -1,4 +1,4 @@
-from bs4 import Tag, NavigableString
+from bs4 import NavigableString, Tag
 
 
 def pivot_pandas_to_excel(soup, show_intermediate_breakdown=False, show_total_breakdown=False):

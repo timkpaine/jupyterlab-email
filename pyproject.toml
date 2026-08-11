@@ -1,38 +1,45 @@
 [build-system]
 requires = [
-    "hatchling>=1.3.1",
+    "hatchling",
+    "hatch-js",
     "jupyterlab>=4,<5",
 ]
 build-backend = "hatchling.build"
 
 [project]
-name = "jupyterlab_email"
-description = "Sending emails from JupyterLab"
-version = "0.3.1"
-readme = "README.md"
-license = { file = "LICENSE" }
-requires-python = ">=3.7"
+name = "jupyterlab-email"
 authors = [
-    { name = "the jupyterlab_email authors" },
+    {name = "the jupyterlab-email authors", email = "t.paine154@gmail.com"},
 ]
+description = "Sending emails from JupyterLab"
+readme = "README.md"
+license = { text = "Apache-2.0" }
+version = "0.3.1"
+requires-python = ">=3.10"
 keywords = [
     "Jupyter",
     "JupyterLab",
     "Templates",
 ]
+
 classifiers = [
     "Development Status :: 4 - Beta",
     "Framework :: Jupyter",
     "Framework :: Jupyter :: JupyterLab",
+    "Framework :: Jupyter :: JupyterLab :: 4",
+    "Framework :: Jupyter :: JupyterLab :: Extensions",
+    "Framework :: Jupyter :: JupyterLab :: Extensions :: Prebuilt",
     "Programming Language :: Python",
+    "Programming Language :: Python :: Implementation :: CPython",
+    "Programming Language :: Python :: Implementation :: PyPy",
     "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.7",
-    "Programming Language :: Python :: 3.8",
-    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
-    "License :: OSI Approved :: Apache Software License",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
+
 dependencies = [
     "beautifulsoup4>=4.9.1",
     "emails>=0.5.15",
@@ -44,65 +51,135 @@ dependencies = [
 
 [project.optional-dependencies]
 develop = [
-    "check-manifest",
+    "build",
+    "bump-my-version",
+    "check-dist",
+    "codespell",
+    "hatch-js",
+    "hatchling",
+    "mdformat",
+    "mdformat-tables>=1",
+    "jupyterlab>=4,<5",
+    "pytest",
+    "pytest-cov",
     "ruff",
-    "pytest",
-    "pytest-cov",
+    "twine",
+    "ty",
+    "uv",
+    "wheel",
 ]
-test = [
-    "pytest",
-    "pytest-cov",
-]
+
+[project.scripts]
 
 [project.urls]
 Repository = "https://github.com/timkpaine/jupyterlab_email"
 Homepage = "https://github.com/timkpaine/jupyterlab_email"
 
-[tool.check-manifest]
-ignore = [
-	"jupyterlab_email/labextension/**",
-	"js/**"
+[tool.bumpversion]
+current_version = "0.3.1"
+commit = true
+tag = true
+commit_args = "-s"
+
+[[tool.bumpversion.files]]
+filename = "jupyterlab_email/__init__.py"
+search = '__version__ = "{current_version}"'
+replace = '__version__ = "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "jupyterlab_email/_version.py"
+search = '__version__ = "{current_version}"'
+replace = '__version__ = "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "pyproject.toml"
+search = 'version = "{current_version}"'
+replace = 'version = "{new_version}"'
+
+[[tool.bumpversion.files]]
+filename = "js/package.json"
+search = '"version": "{current_version}"'
+replace = '"version": "{new_version}"'
+
+[tool.coverage.run]
+branch = true
+omit = [
+    "jupyterlab_email/tests/integration/",
 ]
+
+[tool.coverage.report]
+exclude_also = [
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "@(abc\\.)?abstractmethod",
+]
+ignore_errors = true
+fail_under = 15
 
 [tool.hatch.build]
 artifacts = [
-    "jupyterlab_email/labextension"
+    "jupyterlab_email/nbextension",
+    "jupyterlab_email/labextension",
+]
+
+[tool.hatch.build.sources]
+src = "/"
+
+[tool.hatch.build.targets.sdist]
+core-metadata-version = "2.4"
+packages = [
+    "jupyterlab_email",
+    "js",
+]
+exclude = [
+    "js/dist",
+    "js/node_modules",
+]
+
+[tool.hatch.build.targets.wheel]
+core-metadata-version = "2.4"
+packages = [
+    "jupyterlab_email",
+]
+exclude = [
+    "js"
 ]
 
 [tool.hatch.build.targets.wheel.shared-data]
-"jupyterlab_email/labextension" = "share/jupyter/labextensions/jupyterlab_email"
-"jupyterlab_email/extension/install.json" = "share/jupyter/labextensions/jupyterlab_email/install.json"
+"jupyterlab_email/labextension" = "share/jupyter/labextensions/jupyterlab-email"
+"jupyterlab_email/extension/install.json" = "share/jupyter/labextensions/jupyterlab-email/install.json"
 "jupyterlab_email/extension/jupyterlab_email.json" = "etc/jupyter/jupyter_server_config.d/jupyterlab_email.json"
 
-[tool.hatch.build.targets.sdist]
-exclude = [
-    ".github",
-    "docs",
-]
-
-[tool.hatch.build.hooks.jupyter-builder]
-build-function = "hatch_jupyter_builder.npm_builder"
-ensured-targets = [
-    "jupyterlab_email/labextension/package.json",
-]
-skip-if-exists = [
-    "jupyterlab_email/labextension/package.json",
-]
-dependencies = [
-    "hatch-jupyter-builder>=0.5.0",
-]
-
-[tool.hatch.build.hooks.jupyter-builder.build-kwargs]
+[tool.hatch.build.hooks.hatch-js]
 path = "js"
 build_cmd = "build"
+tool = "pnpm"
+targets = [
+    "jupyterlab_email/nbextension/static/notebook.js",
+    "jupyterlab_email/labextension/package.json",
+]
+
+[tool.pytest.ini_options]
+addopts = [
+    "-vvv",
+    "--junitxml=junit.xml",
+]
+testpaths = "jupyterlab_email/tests"
 
 [tool.ruff]
-line-length = 120
+line-length = 150
+
+[tool.ruff.lint]
+extend-select = [
+    "I",
+]
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
 default-section = "third-party"
-known-first-party = ["jupyterlab_email"]
+known-first-party = [
+    "jupyterlab_email",
+]
 section-order = [
     "future",
     "standard-library",
@@ -112,4 +189,7 @@ section-order = [
 ]
 
 [tool.ruff.lint.per-file-ignores]
-"__init__.py" = ["F401", "F403"]
+"__init__.py" = [
+    "F401",
+    "F403",
+]

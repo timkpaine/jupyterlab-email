@@ -1,7 +1,9 @@
 import os
 import os.path
 from getpass import getpass
+
 from jupyter_server.utils import url_path_join
+
 from .handlers import EmailHandler, EmailsListHandler
 
 
@@ -26,16 +28,16 @@ def load_jupyter_server_extension(nb_server_app):
     base_url = web_app.settings["base_url"]
 
     host_pattern = ".*$"
-    nb_server_app.log.info("Installing jupyterlab_email handler on path %s" % url_path_join(base_url, "emails"))
-    nb_server_app.log.info("Available email servers: %s" % ",".join(k["name"] for k in emails))
+    nb_server_app.log.info("Installing jupyterlab_email handler on path %s", url_path_join(base_url, "emails"))
+    nb_server_app.log.info("Available email servers: %s", ",".join(k["name"] for k in emails))
 
     for k in emails:
         if "password" in k:
             nb_server_app.log.info("WARNING!!! You should not store your password in jupyter_notebook_config.py!!!")
         elif "function" in k:
-            nb_server_app.log.info("Skipping password input for %s@%s" % (k["username"], k["name"]))
+            nb_server_app.log.info("Skipping password input for %s@%s", k["username"], k["name"])
         else:
-            k["password"] = getpass("Input password for %s@%s:" % (k["username"], k["name"]))
+            k["password"] = getpass(f"Input password for {k['username']}@{k['name']}:")
 
     context = {}
     context["emails"] = emails

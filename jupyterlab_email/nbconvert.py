@@ -1,14 +1,12 @@
 # from nbconvert.nbconvertapp import NbConvertApp
-import sys
-import re
-import os
-import os.path
 import html
 import logging
+import os
+import os.path
+import re
 import subprocess
+import sys
 import tempfile
-import traceback
-
 
 _COLOR_CODES = {
     "black": r"(?:\x1b[^m]\d\;30m)([^\x1b]*)",
@@ -88,7 +86,7 @@ def run(
             for color, reg in _COLOR_CODES.items():
                 err = re.sub(
                     reg,
-                    '<span style="color: {color}">{err}</span> '.format(color=color, err=err),
+                    f'<span style="color: {color}">{err}</span> ',
                 )
 
             # remove and closers
@@ -113,7 +111,7 @@ def run(
             return ret, 0
 
     except Exception:
-        logger.critical("Exception: \n" + traceback.format_exc())
+        logger.exception("Exception:")
         return (
             "<html><h1>Notebook Run error has occurred - see raw log for details</h1></html>",
             1,

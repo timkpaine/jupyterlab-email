@@ -16,6 +16,7 @@ import {request} from "requests-helper";
 
 import "../style/index.css";
 
+<<<<<<< before updating
 const default_none = document.createElement("option");
 default_none.selected = false;
 default_none.disabled = true;
@@ -405,6 +406,11 @@ function activate(app, docManager, palette, restorer, mainMenu, browser) {
 
   // eslint-disable-next-line no-console
   console.log("JupyterLab extension jupyterlab_email is activated!");
+=======
+async function activate(_app) {
+  // oxlint-disable-next-line no-console
+  console.log("JupyterLab extension jupyterlab-email is activated!");
+>>>>>>> after updating
 }
 
 const extension = {

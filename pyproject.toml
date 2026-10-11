@@ -59,6 +59,7 @@ develop = [
     "hatchling",
     "jupyter-builder>=1.2.3,<2",
     "mdformat",
+    "mdformat-frontmatter",
     "mdformat-tables>=1",
     "jupyterlab>=4,<5",
     "pytest",
@@ -109,7 +110,7 @@ replace = '"version": "{new_version}"'
 [tool.coverage.run]
 branch = true
 omit = [
-    "jupyterlab_email/tests/integration/",
+    "jupyterlab_email/tests/integration/*",
 ]
 
 [tool.coverage.report]

@@ -43,7 +43,7 @@ def make_email(
     also_attach : also attach pdf/html/both
     postprocessor : run postprocessor on soup
     """
-    name = path.rsplit(os.pathsep, 1)[1].rsplit(".", 1)[0]
+    name = os.path.splitext(os.path.basename(path))[0]
     model = nbformat.writes(nbformat.reads(json.dumps(model), 4))
 
     logger = logger or logging
@@ -80,7 +80,7 @@ def make_email(
         soup = BeautifulSoup(nb, "html.parser")
 
         # strip markdown links
-        for item in soup.findAll("a", {"class": "anchor-link"}):
+        for item in soup.find_all("a", attrs={"class": "anchor-link"}):
             item.decompose()
 
         # strip matplotlib base outs
@@ -90,10 +90,10 @@ def make_email(
                     item.decompose()
 
         # remove dataframe table borders
-        for item in soup.findAll("table", {"border": 1}):
-            item["border"] = 0
-            item["cellspacing"] = 0
-            item["cellpadding"] = 0
+        for item in soup.find_all("table", attrs={"border": "1"}):
+            item["border"] = "0"
+            item["cellspacing"] = "0"
+            item["cellpadding"] = "0"
 
         # extract imgs for outlook
         imgs = soup.find_all("img")
@@ -101,10 +101,14 @@ def make_email(
 
         # attach main part
         for i, img in enumerate(imgs):
-            if not img.get("localdata"):
+            localdata = img.get("localdata")
+            if not localdata:
                 continue
-            imgs_to_attach[img.get("cell_id") + "_" + str(i) + ".png"] = base64.b64decode(img.get("localdata"))
-            img["src"] = "cid:" + img.get("cell_id") + "_" + str(i) + ".png"
+            cell_id = img.get("cell_id")
+            assert isinstance(localdata, str)
+            assert isinstance(cell_id, str)
+            imgs_to_attach[cell_id + "_" + str(i) + ".png"] = base64.b64decode(localdata)
+            img["src"] = "cid:" + cell_id + "_" + str(i) + ".png"
             # encoders.encode_base64(part)
             del img["localdata"]
 
@@ -113,19 +117,24 @@ def make_email(
 
         # attach custom attachments
         for i, att in enumerate(attaches):
-            if not att.get("localdata"):
+            localdata = att.get("localdata")
+            if not localdata:
                 continue
             filename = att.get("filename")
+            assert isinstance(localdata, str)
+            assert isinstance(filename, str)
             if filename.endswith((".png", ".xls", ".xlsx", ".pdf")):
-                att_to_attach[filename] = base64.b64decode(att.get("localdata"))
+                att_to_attach[filename] = base64.b64decode(localdata)
             else:
-                att_to_attach[filename] = att.get("localdata")
+                att_to_attach[filename] = localdata
             att.decompose()
 
         # attach header/footer
         if header or footer:
             head = soup.find("div", {"class": "header"})
             foot = soup.find("div", {"class": "footer"})
+            assert head is not None
+            assert foot is not None
             head.append(BeautifulSoup(header, "html.parser"))
             foot.append(BeautifulSoup(footer, "html.parser"))
 

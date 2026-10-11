@@ -1,6 +1,7 @@
 import base64
 from html import escape
 from io import BytesIO
+from typing import Any, cast
 
 import pandas as pd
 from IPython.display import HTML
@@ -17,9 +18,8 @@ def attach(data, filename, type):
             data = data.to_csv(sep="\t")
         elif type in ("xls", "xlsx"):
             io = BytesIO()
-            writer = pd.ExcelWriter(io, engine=EXCEL_ENGINE)
-            data.to_excel(writer)
-            writer.save()
+            with pd.ExcelWriter(cast(Any, io), engine=EXCEL_ENGINE) as writer:
+                data.to_excel(writer)
             data = base64.b64encode(io.getvalue()).decode("ascii")
         elif type == "html":
             data = escape(data)

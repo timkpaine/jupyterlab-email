@@ -48,13 +48,13 @@ class EmailHandler(JupyterHandler):
         postprocessors=None,
         logger=None,
     ):
-        self.emails = emails
-        self.templates = templates
-        self.user_templates = user_templates
-        self.headers = headers
-        self.footers = footers
-        self.signatures = signatures
-        self.postprocessors = postprocessors
+        self.emails = emails or []
+        self.templates = templates or {}
+        self.user_templates = user_templates or {}
+        self.headers = headers or {}
+        self.footers = footers or {}
+        self.signatures = signatures or {}
+        self.postprocessors = postprocessors or {}
         self.logger = logger or logging
 
     @tornado.web.authenticated
@@ -164,13 +164,13 @@ class EmailsListHandler(JupyterHandler):
         postprocessors=None,
         logger=None,
     ):
-        self.emails = emails
-        self.templates = templates
-        self.user_templates = user_templates
-        self.headers = headers
-        self.footers = footers
-        self.signatures = signatures
-        self.postprocessors = postprocessors
+        self.emails = emails or []
+        self.templates = templates or {}
+        self.user_templates = user_templates or {}
+        self.headers = headers or {}
+        self.footers = footers or {}
+        self.signatures = signatures or {}
+        self.postprocessors = postprocessors or {}
         self.logger = logger or logging
 
     @tornado.web.authenticated

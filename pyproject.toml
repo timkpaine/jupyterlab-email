@@ -45,8 +45,10 @@ dependencies = [
     "emails>=0.5.15",
     "ipython>=7.2.0",
     "jupyterlab>=4,<5",
+    "matplotlib",
     "pandas>=0.23.4",
     "python-magic>=0.4.15",
+    "xlsxwriter",
 ]
 
 [project.optional-dependencies]
@@ -59,6 +61,7 @@ develop = [
     "hatchling",
     "jupyter-builder>=1.2.3,<2",
     "mdformat",
+    "mdformat-frontmatter",
     "mdformat-tables>=1",
     "jupyterlab>=4,<5",
     "pytest",
@@ -109,7 +112,7 @@ replace = '"version": "{new_version}"'
 [tool.coverage.run]
 branch = true
 omit = [
-    "jupyterlab_email/tests/integration/",
+    "jupyterlab_email/tests/integration/*",
 ]
 
 [tool.coverage.report]

@@ -74,10 +74,8 @@ def run(
             # extract out the cell error
             m = re.search(".*CellExecutionError:(?P<CellError>(.*\n)*)", error, flags=re.MULTILINE)
 
-            g = m.groupdict()
-
             # dump it in mail
-            err = g["CellError"]
+            err = m["CellError"] if m is not None else error
 
             # do the escape of <, > before adding real tags
             err = html.escape(err)
@@ -86,14 +84,15 @@ def run(
             for color, reg in _COLOR_CODES.items():
                 err = re.sub(
                     reg,
-                    f'<span style="color: {color}">{err}</span> ',
+                    lambda match, color=color: f'<span style="color: {color}">{match[1]}</span> ',
+                    err,
                 )
 
             # remove and closers
             err = re.sub(_CLOSERS, "", err)
 
             # return with template
-            ret = _ERROR_TEMPLATE.format(err.replace("\n", "<br>"))
+            ret = _ERROR_TEMPLATE.replace("{error}", err.replace("\n", "<br>"))
             return ret, 1
 
         else:
